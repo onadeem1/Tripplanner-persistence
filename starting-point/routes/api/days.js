@@ -12,14 +12,38 @@ router.get('/', (req, res, next) => {
   .catch(next)
 })
 
-router.get('/:id', (req, res, next) => {
+router.get('/:number', (req, res, next) => {
+  console.log('THIS', req.params.number, typeof req.params.number)
+  let obj = {};
+  Day.findOne({
+    where: {
+      number: +req.params.number
+    }
+  })
+  .then((day) => {obj.day = day;
+      return  Promise.all([day.getRestaurants(), day.getActivities()])
+    })
+  .then((result)=>{
+    obj.restaurants = result[0];
+    obj.activities = result[1];
+    return res.json(obj)
+  })
 })
 
 router.post('/', (req, res, next) => {
-  Day.create({
-    number: 5
+  Day.findAndCountAll()
+  .then(function(result) {
+    return result.count
   })
-  .then(day => res.send(day))
+  .then(function(count){
+    return Day.create({
+      number: count + 1
+    })
+  })
+  .then((day) => {
+    res.json(day)
+    //attractionsModule.loadEnhancedAttractions('days', [day])
+  })
   .catch(next)
 })
 

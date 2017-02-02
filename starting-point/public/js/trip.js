@@ -33,10 +33,25 @@ var tripModule = (function () {
   // method used both internally and externally
 
   function switchTo (newCurrentDay) {
-    if (currentDay) currentDay.hide();
-    currentDay = newCurrentDay;
-    currentDay.show();
-  }
+     currentDay.hide();
+
+    $.get(`/api/days/${newCurrentDay.number}`)
+    .then(function(obj){
+        // let dayFromDB = dayModule.create(obj.day)
+        console.log(obj.restaurants)
+        newCurrentDay.activities.forEach((attr) => {dayFromDB.addAttraction(attr)})
+        newCurrentDay.restaurants.forEach((rest) => {dayFromDB.addAttraction(rest)}
+)
+        currentDay = newCurrentDay
+        newCurrentDay.show()
+    })
+
+
+    // currentDay = newCurrentDay;
+    // currentDay.show();
+    // $.get(`/api/days/${newCurrentDay.number}`)
+    // .then(function(day){
+    }
 
   // jQuery event binding
 
@@ -47,12 +62,20 @@ var tripModule = (function () {
 
   function addDay () {
     if (this && this.blur) this.blur(); // removes focus box from buttons
-    var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
-    days.push(newDay);
-    if (days.length === 1) {
-      currentDay = newDay;
-    }
-    switchTo(newDay);
+    $.post('/api/days')
+    .then(function(day){
+      let dayFromDB = dayModule.create(day)
+      if (dayFromDB.number === 1){
+        currentDay = dayFromDB
+      }
+      switchTo(dayFromDB)
+    })
+    // var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
+    // days.push(newDay);
+    // if (days.length === 1) {
+    //   currentDay = newDay;
+    // }
+    // switchTo(newDay);
   }
 
   function deleteCurrentDay () {
@@ -74,9 +97,9 @@ var tripModule = (function () {
 
   var publicAPI = {
 
-    load: function () {
-      $(addDay);
-    },
+    // load: function () {
+    //    $(addDay);
+    //  },
 
     switchTo: switchTo,
 

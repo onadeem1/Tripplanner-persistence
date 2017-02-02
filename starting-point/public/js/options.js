@@ -40,7 +40,6 @@ $(function () {
         attractionsModule.loadEnhancedAttractions('activities', activities);
     })
 
-
     // Once you've made AJAX calls to retrieve this information,
     // call attractions.loadEnhancedAttractions in the fashion
     // exampled below in order to integrate it.
